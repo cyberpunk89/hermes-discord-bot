@@ -95,6 +95,14 @@ def init_db():
                 PRIMARY KEY (discord_id, app_id, snapshot_date)
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS game_coop_cache (
+                app_id INTEGER PRIMARY KEY,
+                is_coop INTEGER NOT NULL,
+                coop_modes TEXT,
+                fetched_at TEXT NOT NULL
+            )
+        """)
 
 
 # ── Watchlist functions (unchanged from original) ────────────────────────────
@@ -244,6 +252,30 @@ def get_common_games():
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+# ── Co-op cache functions ─────────────────────────────────────────────────────
+
+def get_coop_cache(app_id):
+    conn = get_db()
+    try:
+        row = conn.execute(
+            "SELECT is_coop, coop_modes, fetched_at FROM game_coop_cache WHERE app_id = ?", (app_id,)
+        ).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def set_coop_cache(app_id, is_coop, coop_modes):
+    with get_db_context() as conn:
+        conn.execute(
+            """INSERT INTO game_coop_cache (app_id, is_coop, coop_modes, fetched_at)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(app_id) DO UPDATE SET is_coop=excluded.is_coop,
+            coop_modes=excluded.coop_modes, fetched_at=excluded.fetched_at""",
+            (app_id, 1 if is_coop else 0, coop_modes, datetime.now().isoformat()),
+        )
 
 
 # ── News dedup functions ──────────────────────────────────────────────────────
