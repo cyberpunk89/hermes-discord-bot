@@ -1,6 +1,6 @@
 ---
 name: game-watchlist
-description: "Track game prices — list | add <game> [target €] | remove <game> | set-target <game> <price> | clear"
+description: "Track game prices — list | add <game> [target €] | remove <game> | set-target <game> <price> | clear | check-prices"
 version: 1.0.0
 author: your-username
 ---
@@ -53,6 +53,11 @@ python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py set-tar
 python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py clear "<display_name>"
 ```
 
+**Check all watchlist prices and fire alerts (used by cron):**
+```
+python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py check-prices
+```
+
 ## Output Interpretation
 - `ADDED: <title>` — success
 - `ALREADY_EXISTS` — already in watchlist
@@ -62,6 +67,13 @@ python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py clear "
 - `REMOVED: <title>` — removed
 - `CLEARED: <n>` — n games cleared
 - `ERROR: discord_name is empty` — extract sender name from message prefix
+- `NO_ALERTS` — prices checked, nothing triggered
+- `ALERTS: <n>` — followed by alert lines:
+  - `USER:<id> GAME:<title> TARGET_HIT: €<price> <= €<target>` — target price reached
+  - `USER:<id> GAME:<title> PRICE_DROP: <pct>% (€<old> → €<new>)` — significant drop
+
+## When running as a cron price check
+If invoked by cron and `ALERTS: <n>` is in the output, post each alert to channel `PRICE_ALERT_CHANNEL_ID` from the env. Format each alert dramatically — target hit = the fates have delivered, price drop = a crack in the developer's armour. Mention the user by name (look them up from the USER id if needed).
 
 ## Response Style
 Stay in Hermes character. Adding = inducting into the price vigil. Listing = reading from the divine ledger.
