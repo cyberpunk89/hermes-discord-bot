@@ -1,0 +1,19 @@
+[Unit]
+Description=Hermes Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+# Replace YOUR_USER with your Linux username
+User=YOUR_USER
+# Replace /path/to/hermes-discord-bot with your clone location
+WorkingDirectory=/path/to/hermes-discord-bot
+ExecStart=/home/YOUR_USER/.local/bin/hermes gateway run
+Restart=always
+RestartSec=10
+
+StandardOutput=append:/path/to/hermes-discord-bot/bot.log
+StandardError=append:/path/to/hermes-discord-bot/bot.log
+
+[Install]
+WantedBy=multi-user.target
