@@ -68,13 +68,19 @@ Hermes speaks like a snarky sports commentator crossed with a dramatic lore narr
 
 | Command | Description |
 |---------|-------------|
-| `/skill common-games` | Find games everyone owns in common |
-| `/skill game-news` | Fetch latest game updates manually |
+| `/skill common-games` | Find games everyone owns in common, with unplayed co-op gems highlighted |
+| `/skill game-news` | Fetch latest game updates manually (shows recent items; won't interfere with the cron feed) |
 | `/skill weekly-recap` | Generate this week's power rankings |
+| `/skill should-buy <game>` | Group verdict — co-op status, price vs. historical low, total cost for non-owners |
+| `/skill game-suggest` | Recommend popular co-op games the group doesn't own yet, ranked by deal value |
 
 ---
 
 ## Setup
+
+### Bot Behaviour
+
+The bot requires an @mention to respond in all channels except the designated home/Hermes channel (`DISCORD_HOME_CHANNEL`), where it responds freely. Cron jobs (game news, weekly recap) post autonomously and are unaffected by this setting.
 
 ### Prerequisites
 - [Hermes Agent](https://hermes-agent.nousresearch.com) installed
@@ -236,9 +242,19 @@ hermes-bot/
 │   │       └── steam_linker.py
 │   ├── common-games/        # /skill common-games
 │   ├── game-news/           # /skill game-news (+ cron)
-│   └── weekly-recap/        # /skill weekly-recap (+ cron)
+│   ├── weekly-recap/        # /skill weekly-recap (+ cron)
+│   ├── should-buy/          # /skill should-buy
+│   │   ├── SKILL.md
+│   │   └── scripts/
+│   │       └── should_buy.py
+│   └── game-suggest/        # /skill game-suggest
+│       ├── SKILL.md
+│       └── scripts/
+│           └── game_suggester.py
 ├── db/
 │   └── database.py          # SQLite schema + all DB helpers
+├── doc/
+│   └── docs.html            # Full HTML documentation
 ├── watchlist.db             # SQLite database (not in git)
 ├── game-price-bot.service   # Systemd unit file
 └── hermes-bot-handoff.md    # Original design document

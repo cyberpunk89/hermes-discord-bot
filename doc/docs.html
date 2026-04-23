@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermes Bot — Documentation</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #c9a84c;
+      --accent2: #7c6fcd;
+      --green: #4caf82;
+      --red: #e05c5c;
+      --blue: #5b9cf6;
+      --text: #e2e4ef;
+      --muted: #7a7f9a;
+      --code-bg: #13151f;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    nav {
+      width: 260px;
+      min-width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .nav-logo h1 { font-size: 20px; color: var(--accent); letter-spacing: 0.5px; }
+    .nav-logo p { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    nav ul { list-style: none; }
+    nav ul li a {
+      display: block;
+      padding: 7px 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    nav ul li a:hover { color: var(--text); background: var(--surface2); border-left-color: var(--accent2); }
+    nav ul li.section-title {
+      padding: 16px 20px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    main { flex: 1; padding: 48px 56px; max-width: 900px; }
+
+    /* ── Typography ── */
+    h1 { font-size: 32px; color: var(--accent); margin-bottom: 8px; }
+    h2 { font-size: 22px; color: var(--text); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 16px; color: var(--accent2); margin: 28px 0 10px; }
+    h4 { font-size: 14px; color: var(--muted); font-weight: 600; margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    p { margin-bottom: 14px; color: var(--text); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1a1d27 0%, #1e2035 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-bottom: 40px;
+    }
+    .hero .subtitle { color: var(--muted); font-size: 15px; margin-top: 8px; max-width: 580px; }
+    .hero .quote {
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      padding: 12px 18px;
+      margin-top: 20px;
+      border-radius: 0 6px 6px 0;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── Badges ── */
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-gold { background: #3a2f10; color: var(--accent); border: 1px solid #5a4a20; }
+    .badge-purple { background: #1e1a3a; color: #a89de8; border: 1px solid #3a3060; }
+    .badge-green { background: #0f2a1e; color: var(--green); border: 1px solid #1e4a34; }
+    .badge-blue { background: #0f1e3a; color: var(--blue); border: 1px solid #1e3a6a; }
+
+    /* ── Code ── */
+    code {
+      background: var(--code-bg);
+      color: #b0b8d8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      border: 1px solid var(--border);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 14px 0 20px;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #c8d0f0;
+    }
+    .comment { color: #4a5270; }
+    .keyword { color: #c792ea; }
+    .string { color: #c3e88d; }
+    .fn { color: #82aaff; }
+    .num { color: #f78c6c; }
+
+    /* ── Cards ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .card h3 { margin-top: 0; }
+    .card p { font-size: 13.5px; color: var(--muted); margin-bottom: 0; }
+    .card .icon { font-size: 22px; margin-bottom: 10px; }
+
+    /* ── Skill blocks ── */
+    .skill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .skill-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-header .skill-name { font-size: 16px; font-weight: 700; color: var(--text); }
+    .skill-header .skill-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .skill-body { padding: 18px 20px; }
+    .skill-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 13.5px; }
+    th { background: var(--surface2); padding: 10px 14px; text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 12px;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-warning { background: #2a2010; border: 1px solid #5a4010; color: #d4a050; }
+    .callout-info { background: #0f1e3a; border: 1px solid #1e3a6a; color: #7ab0f0; }
+    .callout-tip { background: #0f2a1e; border: 1px solid #1e4a34; color: #60c090; }
+
+    /* ── File tree ── */
+    .tree {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 2;
+    }
+    .tree .dir { color: var(--blue); }
+    .tree .file { color: #c8d0f0; }
+    .tree .note { color: var(--muted); }
+    .tree .dim { color: #3a4060; }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .flow-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      text-align: center;
+      min-width: 110px;
+    }
+    .flow-box .label { color: var(--muted); font-size: 11px; margin-bottom: 2px; }
+    .flow-box .value { color: var(--text); font-weight: 600; }
+    .flow-arrow { color: var(--muted); padding: 0 8px; font-size: 18px; }
+
+    /* ── Members ── */
+    .members { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+    .member {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .member-avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--accent2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .member-id { color: var(--muted); font-size: 11px; font-family: monospace; }
+
+    section { scroll-margin-top: 24px; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Sidebar nav ── -->
+  <nav>
+    <div class="nav-logo">
+      <h1>⚡ Hermes Bot</h1>
+      <p>gaming_Tavern · v1.1</p>
+    </div>
+    <ul>
+      <li class="section-title">Overview</li>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#structure">File Structure</a></li>
+
+      <li class="section-title">Skills</li>
+      <li><a href="#skill-game-price">game-price</a></li>
+      <li><a href="#skill-game-watchlist">game-watchlist</a></li>
+      <li><a href="#skill-steam-link">steam-link</a></li>
+      <li><a href="#skill-common-games">common-games</a></li>
+      <li><a href="#skill-game-news">game-news</a></li>
+      <li><a href="#skill-weekly-recap">weekly-recap</a></li>
+      <li><a href="#skill-should-buy">should-buy</a></li>
+      <li><a href="#skill-game-suggest">game-suggest</a></li>
+
+      <li class="section-title">Data</li>
+      <li><a href="#database">Database Schema</a></li>
+      <li><a href="#env">Environment Variables</a></li>
+
+      <li class="section-title">Operations</li>
+      <li><a href="#deployment">Deployment</a></li>
+      <li><a href="#cron">Scheduled Tasks</a></li>
+      <li><a href="#members">Server Members</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Main content ── -->
+  <main>
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>⚡ Hermes Bot</h1>
+      <p class="subtitle">A Discord bot for <strong>gaming_Tavern</strong> — powered by the Hermes Agent Framework with the personality of Hermes from <em>Hades</em>. Tracks game prices, monitors Steam libraries, delivers patch notes, generates weekly power rankings, and suggests new games to play.</p>
+      <div class="badges">
+        <span class="badge badge-gold">Hermes Agent v0.10</span>
+        <span class="badge badge-purple">8 Custom Skills</span>
+        <span class="badge badge-green">Discord Gateway</span>
+        <span class="badge badge-blue">SQLite DB</span>
+      </div>
+      <div class="quote">
+        "Another week passes in the mortal realm. Ninad led the charge in three sessions, yet somehow managed to die first in all of them. The prophecy remains… unclear."
+      </div>
+    </div>
+
+    <!-- Introduction -->
+    <section id="intro">
+      <h2>Introduction</h2>
+      <p>Hermes is a Discord bot built for a co-op gaming friend group. It speaks with the personality of Hermes from the game <em>Hades</em> — snarky, dramatic, and enthusiastically rooting for the mortals. Every response is in character.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="icon">💰</div>
+          <h3>Price Tracking</h3>
+          <p>Real-time game prices from GG.deals and IsThereAnyDeal. Watchlist with price drop alerts.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🎮</div>
+          <h3>Steam Integration</h3>
+          <p>Link Steam accounts, discover games everyone owns, track playtime across the group.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📰</div>
+          <h3>Game News</h3>
+          <p>Monitors Steam for patch notes and updates on games in the group's shared library.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🏆</div>
+          <h3>Weekly Recaps</h3>
+          <p>Sunday power rankings — who played most, who carried, who dragged the team.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🛒</div>
+          <h3>Group Buy Verdict</h3>
+          <p>Checks who owns a game, current vs. historical price, total cost for those who don't.</p>
+        </div>
+        <div class="card">
+          <div class="icon">✨</div>
+          <h3>Game Suggestions</h3>
+          <p>Recommends popular co-op titles the group doesn't own yet, surfacing the best current deals.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture">
+      <h2>Architecture</h2>
+      <p>The bot runs on the <a href="https://hermes-agent.nousresearch.com">Hermes Agent Framework</a> using its native Discord gateway. The LLM reads skill instructions and executes Python scripts via its terminal tool to fetch real data.</p>
+
+      <div class="flow">
+        <div class="flow-box"><div class="label">User</div><div class="value">Discord</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="label">Platform</div><div class="value">Gateway</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="label">AI</div><div class="value">LLM Agent</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="label">Skill</div><div class="value">SKILL.md</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="label">Script</div><div class="value">Python</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box"><div class="label">Data</div><div class="value">API / DB</div></div>
+      </div>
+
+      <h3>How Skills Work</h3>
+      <p>Each skill is a directory containing a <code>SKILL.md</code> file (instructions for the LLM) and a <code>scripts/</code> folder (Python scripts that fetch real data). When a user invokes a skill, the LLM reads the instructions and calls the Python script via its terminal tool, then presents the output in Hermes character.</p>
+
+      <h3>Mention Behaviour</h3>
+      <p>The bot requires an @mention to respond in all channels except the designated home/Hermes channel, where it responds freely. Cron jobs (news, recap) post autonomously to their channels without needing a trigger.</p>
+
+      <h3>Key Config Files</h3>
+      <table>
+        <tr><th>File</th><th>Purpose</th></tr>
+        <tr><td><code>~/.hermes/SOUL.md</code></td><td>Hermes personality prompt — loaded on every message</td></tr>
+        <tr><td><code>~/.hermes/config.yaml</code></td><td>LLM model, gateway settings, skills directories, free_response_channels</td></tr>
+        <tr><td><code>.env</code></td><td>All API keys and channel IDs (project root)</td></tr>
+        <tr><td><code>skills/</code></td><td>All skill directories registered via config.yaml external_dirs</td></tr>
+      </table>
+    </section>
+
+    <!-- File Structure -->
+    <section id="structure">
+      <h2>File Structure</h2>
+      <div class="tree">
+        <span class="dir">game-price-bot/</span><br>
+        &nbsp;&nbsp;<span class="dir">skills/</span> &nbsp;<span class="note">← Hermes skills (registered via config.yaml external_dirs)</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">_load_env.py</span> &nbsp;<span class="note">← Loads .env into all scripts</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">game-price/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span> &nbsp;<span class="note">← LLM instructions</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">price_lookup.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">game-watchlist/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">watchlist_manager.py, db_utils.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">steam-link/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">steam_linker.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">common-games/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">common_games.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">game-news/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">news_fetcher.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">weekly-recap/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">recap_generator.py, refresh_playtime.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">should-buy/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">should_buy.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">game-suggest/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><span class="file">game_suggester.py</span><br>
+        &nbsp;&nbsp;<span class="dir">db/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">database.py</span> &nbsp;<span class="note">← All SQLite schema + helpers</span><br>
+        &nbsp;&nbsp;<span class="dir">doc/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">docs.html</span> &nbsp;<span class="note">← This file</span><br>
+        &nbsp;&nbsp;<span class="file">watchlist.db</span> &nbsp;<span class="note">← SQLite database (not in git)</span><br>
+        &nbsp;&nbsp;<span class="file">game-price-bot.service</span> &nbsp;<span class="note">← systemd unit</span><br>
+        &nbsp;&nbsp;<span class="file">README.md</span>
+      </div>
+    </section>
+
+    <hr>
+    <h2 style="border:none;margin-top:0">Skills Reference</h2>
+
+    <!-- game-price -->
+    <section id="skill-game-price">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#2a1f0a">💰</div>
+          <div>
+            <div class="skill-name">game-price</div>
+            <div class="skill-desc">Look up current and historical game prices from GG.deals + IsThereAnyDeal</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke via <code>/skill game-price</code> in Discord, then provide a game name or Steam URL. Append <code>--india</code> to include INR pricing.</p>
+
+          <h4>Script</h4>
+          <pre><code><span class="comment"># skills/game-price/scripts/price_lookup.py</span>
+python3 price_lookup.py <span class="string">"&lt;game name or steam url&gt;"</span>
+python3 price_lookup.py <span class="string">"&lt;game&gt;"</span> --india</code></pre>
+
+          <h4>Output</h4>
+          <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><code>TITLE</code></td><td>Game name from Steam</td></tr>
+            <tr><td><code>APPID</code></td><td>Steam App ID</td></tr>
+            <tr><td><code>CURRENT_RETAIL</code></td><td>Best current retail price (EUR)</td></tr>
+            <tr><td><code>CURRENT_KEYSHOP</code></td><td>Best current keyshop price (EUR)</td></tr>
+            <tr><td><code>HIST_RETAIL</code></td><td>All-time lowest retail price</td></tr>
+            <tr><td><code>HIST_KEYSHOP</code></td><td>All-time lowest keyshop price</td></tr>
+            <tr><td><code>CURRENT_RETAIL_IN</code></td><td>Best retail price in INR (with --india)</td></tr>
+            <tr><td><code>HIST_RETAIL_IN</code></td><td>All-time lowest INR price (with --india)</td></tr>
+            <tr><td><code>STORE_URL</code></td><td>Steam store link</td></tr>
+            <tr><td><code>GG_DEALS_URL</code></td><td>GG.deals comparison page</td></tr>
+            <tr><td><code>METACRITIC</code></td><td>Metacritic score</td></tr>
+            <tr><td><code>GENRES</code></td><td>Game genres</td></tr>
+          </table>
+
+          <h4>Data Sources</h4>
+          <p>Primary: <strong>GG.deals API</strong> (<code>GG_DEALS_API_KEY</code>). Fallback: <strong>IsThereAnyDeal</strong> (<code>ITAD_API_KEY</code>). Game metadata from <strong>Steam Store API</strong> (no key required).</p>
+
+          <h4>Error Codes</h4>
+          <table>
+            <tr><th>Output</th><th>Meaning</th></tr>
+            <tr><td><code>NO_RESULT</code></td><td>Game not found on Steam — try a different name</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- game-watchlist -->
+    <section id="skill-game-watchlist">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#0f2a1e">📋</div>
+          <div>
+            <div class="skill-name">game-watchlist</div>
+            <div class="skill-desc">Personal price watchlist with alerts on price drops and target price hits</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Commands</h4>
+          <table>
+            <tr><th>Action</th><th>Script call</th></tr>
+            <tr><td>Add game</td><td><code>watchlist_manager.py add "&lt;name&gt;" "&lt;game&gt;" [price]</code></td></tr>
+            <tr><td>Remove game</td><td><code>watchlist_manager.py remove "&lt;name&gt;" "&lt;game&gt;"</code></td></tr>
+            <tr><td>List watchlist</td><td><code>watchlist_manager.py list "&lt;name&gt;"</code></td></tr>
+            <tr><td>Set target price</td><td><code>watchlist_manager.py set-target "&lt;name&gt;" "&lt;game&gt;" &lt;price&gt;</code></td></tr>
+            <tr><td>Check prices</td><td><code>watchlist_manager.py check-prices</code></td></tr>
+            <tr><td>Clear all</td><td><code>watchlist_manager.py clear "&lt;name&gt;"</code></td></tr>
+          </table>
+
+          <h4>Limits</h4>
+          <p>Max <strong>20 games</strong> per user. Alerts trigger on: target price reached, 10%+ price drop, or all-time historical low. Alerts are posted to <code>PRICE_ALERT_CHANNEL_ID</code>.</p>
+
+          <h4>Output Codes</h4>
+          <table>
+            <tr><th>Code</th><th>Meaning</th></tr>
+            <tr><td><code>ADDED: &lt;title&gt;</code></td><td>Game added to watchlist</td></tr>
+            <tr><td><code>ALREADY_EXISTS</code></td><td>Already in watchlist</td></tr>
+            <tr><td><code>NOT_FOUND</code></td><td>Game not found on Steam</td></tr>
+            <tr><td><code>LIMIT_REACHED</code></td><td>20 game maximum hit</td></tr>
+            <tr><td><code>EMPTY</code></td><td>Watchlist is empty</td></tr>
+            <tr><td><code>TARGET_HIT</code></td><td>Price at or below target</td></tr>
+            <tr><td><code>PRICE_DROP</code></td><td>Price dropped 10%+</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- steam-link -->
+    <section id="skill-steam-link">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#0f1e3a">🔗</div>
+          <div>
+            <div class="skill-name">steam-link</div>
+            <div class="skill-desc">Connect a Steam account to the group registry</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Commands</h4>
+          <table>
+            <tr><th>Action</th><th>Usage</th></tr>
+            <tr><td>Link account</td><td><code>/skill steam-link link &lt;steam_id_or_vanity&gt;</code></td></tr>
+            <tr><td>Unlink account</td><td><code>/skill steam-link unlink</code></td></tr>
+            <tr><td>List linked users</td><td><code>/skill steam-link list-users</code></td></tr>
+          </table>
+
+          <h4>Steam ID Formats Accepted</h4>
+          <ul style="padding-left:20px;color:var(--text);line-height:2">
+            <li><strong>SteamID64</strong> — 17-digit number, e.g. <code>76561198012345678</code></li>
+            <li><strong>Vanity URL slug</strong> — the custom part of your Steam profile URL, e.g. <code>gabelogannewell</code></li>
+          </ul>
+
+          <div class="callout callout-warning">
+            <div class="callout-icon">⚠️</div>
+            <div>Steam library must be set to <strong>Public</strong> in Steam privacy settings. Private libraries will return <code>LIBRARY_PRIVATE_OR_ERROR</code>.</div>
+          </div>
+
+          <h4>Output Codes</h4>
+          <table>
+            <tr><th>Code</th><th>Meaning</th></tr>
+            <tr><td><code>LINKED: &lt;name&gt;</code></td><td>Account linked, library fetched</td></tr>
+            <tr><td><code>GAME_COUNT: &lt;n&gt;</code></td><td>Number of games imported</td></tr>
+            <tr><td><code>VANITY_NOT_FOUND</code></td><td>Vanity URL didn't resolve — try numeric SteamID64</td></tr>
+            <tr><td><code>LIBRARY_PRIVATE_OR_ERROR</code></td><td>Library is private or API error</td></tr>
+            <tr><td><code>UNLINKED</code></td><td>Account and games removed</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- common-games -->
+    <section id="skill-common-games">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#1e0a2a">🎯</div>
+          <div>
+            <div class="skill-name">common-games</div>
+            <div class="skill-desc">Find co-op games everyone in the group owns, highlighting unplayed gems</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke <code>/skill common-games</code>. No arguments needed — scans all linked Steam accounts automatically.</p>
+
+          <h4>Output Sections</h4>
+          <table>
+            <tr><th>Section</th><th>Description</th></tr>
+            <tr><td><code>UNPLAYED_GEMS</code></td><td>Co-op games no one has launched yet — presented as "pick something new" divine recommendations</td></tr>
+            <tr><td><code>COOP_LIBRARY</code></td><td>Co-op games the group has already played, sorted by collective hours</td></tr>
+            <tr><td><code>OTHER_COMMON</code></td><td>Shared non-co-op games (skipped unless asked)</td></tr>
+          </table>
+
+          <h4>Game Line Format</h4>
+          <pre><code>GAME: Deep Rock Galactic | PLAYTIME: 240h | OWNERS: 3 | MODE: Online Co-op, Online Multiplayer</code></pre>
+
+          <div class="callout callout-info">
+            <div class="callout-icon">ℹ️</div>
+            <div>Requires at least <strong>2 users</strong> to have linked Steam accounts. Returns <code>NOT_ENOUGH_USERS</code> otherwise. Co-op status is cached for 14 days.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- game-news -->
+    <section id="skill-game-news">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#1a0f2a">📰</div>
+          <div>
+            <div class="skill-name">game-news</div>
+            <div class="skill-desc">Fetch patch notes and updates from Steam for the group's shared games</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke <code>/skill game-news</code> manually to see the latest news. Manual queries use <code>--recent</code> mode — they fetch the last 3 relevant items per game directly from Steam <strong>without touching the deduplication log</strong>, so browsing never interferes with the cron feed.</p>
+          <p>The cron job (every 4 hours) runs without <code>--recent</code>: it deduplicates against the <code>seen_news</code> table and marks items so they're never re-posted. Summaries are cleaned of HTML tags and BBCode before being passed to the LLM.</p>
+
+          <h4>Scripts</h4>
+          <pre><code><span class="comment"># Manual query — recent items, no dedup side-effects</span>
+python3 news_fetcher.py --recent
+
+<span class="comment"># Manual query for a specific game (by Steam App ID)</span>
+python3 news_fetcher.py --recent 548430
+
+<span class="comment"># Cron mode — deduplicates and marks items seen</span>
+python3 news_fetcher.py</code></pre>
+
+          <h4>Output</h4>
+          <pre><code>NEW_ITEMS: 2
+---
+GAME: Deep Rock Galactic
+TITLE: Update 38: Patch Notes
+URL: https://store.steampowered.com/...
+DATE: 2026-04-18
+SUMMARY: Scout changes, new cosmetics...
+---</code></pre>
+
+          <h4>Deduplication</h4>
+          <p>Cron runs store each posted item's <code>gid</code> in the <code>seen_news</code> table — items are never re-posted. Manual <code>--recent</code> queries bypass this table entirely, so the two modes are fully independent.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- weekly-recap -->
+    <section id="skill-weekly-recap">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#2a1a0a">🏆</div>
+          <div>
+            <div class="skill-name">weekly-recap</div>
+            <div class="skill-desc">Sunday power rankings — who played most, who carried, what game dominated</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke <code>/skill weekly-recap</code> manually, or runs automatically every Sunday at 18:00 via cron.</p>
+
+          <h4>Scripts (run in order)</h4>
+          <pre><code><span class="comment"># 1. Refresh playtime from Steam API</span>
+python3 refresh_playtime.py
+
+<span class="comment"># 2. Generate recap from delta since last snapshot</span>
+python3 recap_generator.py</code></pre>
+
+          <h4>Output Structure</h4>
+          <pre><code>PERIOD: 2026-04-12 to 2026-04-19
+TOTAL_PLAYERS: 4
+
+POWER_RANKINGS:
+RANK 1: Nikel | 14.5h | TOP_GAME: Deep Rock Galactic
+RANK 2: Furaiboi | 9.2h | TOP_GAME: Valheim
+...
+
+GAME_OF_THE_WEEK: Deep Rock Galactic | 28h across 3 player(s)
+
+TOP_SESSIONS:
+Nikel: Deep Rock Galactic — 6.5h
+...</code></pre>
+
+          <h4>How Snapshots Work</h4>
+          <p>On each recap run, current Steam playtime is saved to <code>playtime_snapshots</code>. Next week's recap compares against this baseline to show only <em>this week's</em> activity rather than all-time hours.</p>
+
+          <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div>First run returns <code>NO_DATA</code> and creates the baseline snapshot. The second run (next week) will produce the actual recap.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- should-buy -->
+    <section id="skill-should-buy">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#1a2a0a">🛒</div>
+          <div>
+            <div class="skill-name">should-buy</div>
+            <div class="skill-desc">Group purchase verdict — co-op status, price vs. historical low, total cost</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke <code>/skill should-buy &lt;game&gt;</code>. Optionally name specific members to check ownership for — if omitted, checks all linked users.</p>
+
+          <h4>Script</h4>
+          <pre><code><span class="comment"># Check for all linked users</span>
+python3 should_buy.py <span class="string">"Elden Ring"</span>
+
+<span class="comment"># Check for specific members</span>
+python3 should_buy.py <span class="string">"Deep Rock Galactic"</span> <span class="string">"Nikel"</span> <span class="string">"Furaiboi"</span></code></pre>
+
+          <h4>Output</h4>
+          <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><code>GAME</code></td><td>Resolved game title from Steam</td></tr>
+            <tr><td><code>COOP</code></td><td>Yes/No with co-op mode list</td></tr>
+            <tr><td><code>CURRENT_PRICE</code></td><td>Best current retail price (EUR)</td></tr>
+            <tr><td><code>HISTORICAL_LOW</code></td><td>All-time lowest price</td></tr>
+            <tr><td><code>PRICE_STATUS</code></td><td><code>AT_OR_NEAR_HISTORICAL_LOW</code> or <code>N% ABOVE HISTORICAL LOW</code></td></tr>
+            <tr><td><code>OWNS: &lt;name&gt;</code></td><td>Member already owns the game</td></tr>
+            <tr><td><code>NEEDS_TO_BUY: &lt;name&gt; | COST: €N</code></td><td>One line per member who doesn't own it</td></tr>
+            <tr><td><code>TOTAL_COST</code></td><td>Combined spend for all buyers</td></tr>
+          </table>
+
+          <h4>Verdict</h4>
+          <p>Hermes delivers a divine decree: <strong>Buy now</strong>, <strong>Wait for a sale</strong>, or <strong>One of you can share</strong> — based on co-op status, price vs. historical low, and group ownership.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- game-suggest -->
+    <section id="skill-game-suggest">
+      <div class="skill">
+        <div class="skill-header">
+          <div class="skill-icon" style="background:#1a0f2a">✨</div>
+          <div>
+            <div class="skill-name">game-suggest</div>
+            <div class="skill-desc">Recommend popular co-op games the group doesn't own yet, ranked by deal value</div>
+          </div>
+        </div>
+        <div class="skill-body">
+          <h4>Usage</h4>
+          <p>Invoke <code>/skill game-suggest</code>. No arguments — automatically checks all linked users' libraries and returns up to 5 suggestions.</p>
+
+          <h4>Script</h4>
+          <pre><code><span class="comment"># skills/game-suggest/scripts/game_suggester.py</span>
+python3 game_suggester.py</code></pre>
+
+          <h4>Algorithm</h4>
+          <ol style="padding-left:20px;color:var(--text);line-height:2.2">
+            <li>Collect every game owned by any linked user from <code>user_games</code></li>
+            <li>Fetch top "Online Co-op" tagged games from <strong>SteamSpy</strong> (sorted by owner count)</li>
+            <li>Filter out any game the group already owns</li>
+            <li>Look up EUR pricing for each candidate via GG.deals / ITAD (up to 30 candidates checked)</li>
+            <li>Skip games over €60 at full price</li>
+            <li>Return top 5 with current price, historical low, and discount percentage</li>
+          </ol>
+
+          <h4>Output</h4>
+          <pre><code>LINKED_USERS: 3
+SUGGESTION: Lethal Company | APPID: 1966720 | PRICE: €9.29 | HIST_LOW: €6.99 | DISCOUNT: 0% off | URL: https://gg.deals/game/lethal-company/
+SUGGESTION: It Takes Two | APPID: 1426210 | PRICE: €14.99 | HIST_LOW: €7.49 | DISCOUNT: 50% off | URL: https://gg.deals/...</code></pre>
+
+          <h4>Output Codes</h4>
+          <table>
+            <tr><th>Code</th><th>Meaning</th></tr>
+            <tr><td><code>NO_USERS</code></td><td>No linked Steam accounts — use /skill steam-link first</td></tr>
+            <tr><td><code>ERROR: ...</code></td><td>SteamSpy or price API unavailable — try again later</td></tr>
+            <tr><td><code>NO_SUGGESTIONS</code></td><td>No priced co-op games found outside the group's library</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- Database -->
+    <section id="database">
+      <h2>Database Schema</h2>
+      <p>All data lives in <code>watchlist.db</code> (SQLite). The database module is at <code>db/database.py</code>.</p>
+
+      <h3>watchlist</h3>
+      <p>Per-user game price watchlist entries.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>user_id</code></td><td>TEXT PK</td><td>Discord user ID</td></tr>
+        <tr><td><code>appid</code></td><td>TEXT</td><td>Steam App ID</td></tr>
+        <tr><td><code>game_title</code></td><td>TEXT</td><td>Game name</td></tr>
+        <tr><td><code>target_price</code></td><td>REAL</td><td>Alert when price ≤ this</td></tr>
+        <tr><td><code>notify_any_drop</code></td><td>INT</td><td>Alert on 10%+ drop (0/1)</td></tr>
+        <tr><td><code>notify_hist_low</code></td><td>INT</td><td>Alert on historical low (0/1)</td></tr>
+        <tr><td><code>last_retail_price</code></td><td>REAL</td><td>Last known retail price</td></tr>
+        <tr><td><code>last_keyshop_price</code></td><td>REAL</td><td>Last known keyshop price</td></tr>
+      </table>
+
+      <h3>users</h3>
+      <p>Steam accounts linked to Discord users.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>discord_id</code></td><td>TEXT PK</td><td>Discord user ID</td></tr>
+        <tr><td><code>discord_name</code></td><td>TEXT</td><td>Display name</td></tr>
+        <tr><td><code>steam_id</code></td><td>TEXT</td><td>Steam SteamID64</td></tr>
+        <tr><td><code>linked_at</code></td><td>TIMESTAMP</td><td>When account was linked</td></tr>
+        <tr><td><code>opted_in</code></td><td>BOOL</td><td>Consent flag (always 1 on link)</td></tr>
+      </table>
+
+      <h3>user_games</h3>
+      <p>Full Steam library per linked user.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>discord_id</code></td><td>TEXT</td><td>Discord user ID</td></tr>
+        <tr><td><code>app_id</code></td><td>INTEGER</td><td>Steam App ID</td></tr>
+        <tr><td><code>game_name</code></td><td>TEXT</td><td>Game title</td></tr>
+        <tr><td><code>playtime_minutes</code></td><td>INTEGER</td><td>Total playtime in minutes</td></tr>
+        <tr><td><code>last_updated</code></td><td>TIMESTAMP</td><td>Last library refresh</td></tr>
+      </table>
+
+      <h3>seen_news</h3>
+      <p>Deduplication log for game news. Prevents the same patch note posting twice.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>gid</code></td><td>TEXT PK</td><td>Steam news item ID</td></tr>
+        <tr><td><code>app_id</code></td><td>INTEGER</td><td>Steam App ID</td></tr>
+        <tr><td><code>title</code></td><td>TEXT</td><td>News headline</td></tr>
+        <tr><td><code>posted_at</code></td><td>TIMESTAMP</td><td>When it was first seen</td></tr>
+      </table>
+
+      <h3>playtime_snapshots</h3>
+      <p>Weekly playtime baseline used to calculate deltas for the recap.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>discord_id</code></td><td>TEXT</td><td>Discord user ID</td></tr>
+        <tr><td><code>app_id</code></td><td>INTEGER</td><td>Steam App ID</td></tr>
+        <tr><td><code>playtime_minutes</code></td><td>INTEGER</td><td>Playtime at snapshot time</td></tr>
+        <tr><td><code>snapshot_date</code></td><td>TEXT</td><td>Date of snapshot (YYYY-MM-DD)</td></tr>
+      </table>
+
+      <h3>game_coop_cache</h3>
+      <p>14-day TTL cache of co-op status for each game, to avoid hammering the Steam Store API.</p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>app_id</code></td><td>INTEGER PK</td><td>Steam App ID</td></tr>
+        <tr><td><code>is_coop</code></td><td>INTEGER</td><td>1 if co-op, 0 if not</td></tr>
+        <tr><td><code>coop_modes</code></td><td>TEXT</td><td>Comma-separated mode names</td></tr>
+        <tr><td><code>fetched_at</code></td><td>TEXT</td><td>ISO timestamp of last fetch</td></tr>
+      </table>
+    </section>
+
+    <!-- Environment Variables -->
+    <section id="env">
+      <h2>Environment Variables</h2>
+      <p>All secrets live in <code>.env</code> at the project root. Never commit this file.</p>
+      <table>
+        <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+        <tr><td><code>DISCORD_BOT_TOKEN</code></td><td>✅</td><td>Bot token from Discord Developer Portal</td></tr>
+        <tr><td><code>DISCORD_ALLOWED_USERS</code></td><td>✅</td><td>Comma-separated Discord user IDs allowed to use the bot</td></tr>
+        <tr><td><code>DISCORD_HOME_CHANNEL</code></td><td>✅</td><td>Channel ID where bot responds freely (no @mention needed)</td></tr>
+        <tr><td><code>STEAM_API_KEY</code></td><td>✅</td><td>Steam Web API key — steamcommunity.com/dev/apikey</td></tr>
+        <tr><td><code>GG_DEALS_API_KEY</code></td><td>✅</td><td>GG.deals API key (primary price source)</td></tr>
+        <tr><td><code>ITAD_API_KEY</code></td><td>✅</td><td>IsThereAnyDeal API key (price fallback + game-suggest)</td></tr>
+        <tr><td><code>NEWS_CHANNEL_ID</code></td><td>✅</td><td>Discord channel for game news cron posts</td></tr>
+        <tr><td><code>RECAP_CHANNEL_ID</code></td><td>✅</td><td>Discord channel for weekly recap cron posts</td></tr>
+        <tr><td><code>PRICE_ALERT_CHANNEL_ID</code></td><td>✅</td><td>Discord channel for watchlist price alert posts</td></tr>
+        <tr><td><code>DB_PATH</code></td><td>optional</td><td>Absolute path to <code>watchlist.db</code> (defaults to project root)</td></tr>
+      </table>
+    </section>
+
+    <!-- Deployment -->
+    <section id="deployment">
+      <h2>Deployment</h2>
+
+      <h3>Systemd Service</h3>
+      <p>The bot runs as a user systemd service that auto-starts on boot.</p>
+      <pre><code><span class="comment"># Start / stop / restart</span>
+systemctl --user start hermes-gateway
+systemctl --user stop hermes-gateway
+systemctl --user restart hermes-gateway
+
+<span class="comment"># Check status</span>
+hermes gateway status
+
+<span class="comment"># Live logs</span>
+journalctl --user -u hermes-gateway.service -f
+tail -f bot.log</code></pre>
+
+      <h3>Gateway Commands</h3>
+      <pre><code><span class="comment"># Restart gateway (picks up config changes)</span>
+hermes gateway restart
+
+<span class="comment"># Check connection state</span>
+cat ~/.hermes/gateway_state.json
+
+<span class="comment"># View loaded skills</span>
+hermes skills list</code></pre>
+
+      <h3>Adding / Updating Skills</h3>
+      <p>Skills live in <code>skills/</code> and are registered via <code>~/.hermes/config.yaml</code> <code>external_dirs</code>. Edit a skill's <code>SKILL.md</code> or Python script and restart the gateway:</p>
+      <pre><code><span class="comment"># Pick up SKILL.md changes and re-sync slash commands</span>
+hermes gateway restart</code></pre>
+    </section>
+
+    <!-- Cron -->
+    <section id="cron">
+      <h2>Scheduled Tasks</h2>
+      <p>Cron jobs are managed by Hermes's built-in scheduler. Set them up by telling Hermes in Discord:</p>
+
+      <h3>Game News (every 4 hours)</h3>
+      <pre><code>/cron add "every 4h" "Fetch new game news for all tracked games and post to channel NEWS_CHANNEL_ID using the game-news skill" --skills game-news</code></pre>
+
+      <h3>Weekly Recap (Sundays 18:00)</h3>
+      <pre><code>/cron add "0 18 * * 0" "Generate and post the weekly recap and power rankings to channel RECAP_CHANNEL_ID" --skills weekly-recap</code></pre>
+
+      <h3>Managing Jobs</h3>
+      <pre><code><span class="comment"># List all jobs</span>
+/cron list
+
+<span class="comment"># Test a job immediately</span>
+/cron run &lt;job_id&gt;
+
+<span class="comment"># Pause / remove</span>
+/cron pause &lt;job_id&gt;
+/cron remove &lt;job_id&gt;</code></pre>
+    </section>
+
+    <!-- Members -->
+    <section id="members">
+      <h2>Server Members</h2>
+      <p>All 9 human members of <strong>gaming_Tavern</strong> are authorized to use the bot.</p>
+      <div class="members">
+        <div class="member"><div class="member-avatar">N</div><div><div>NagisaSan</div><div class="member-id">217396202356867072</div></div></div>
+        <div class="member"><div class="member-avatar">F</div><div><div>Furaiboi</div><div class="member-id">275005917680893962</div></div></div>
+        <div class="member"><div class="member-avatar">N</div><div><div>Nikel</div><div class="member-id">383325850625638410</div></div></div>
+        <div class="member"><div class="member-avatar">F</div><div><div>F7DER</div><div class="member-id">524991184309846024</div></div></div>
+        <div class="member"><div class="member-avatar">L</div><div><div>lastsurvivor1</div><div class="member-id">546417136575316008</div></div></div>
+        <div class="member"><div class="member-avatar">R</div><div><div>randychihuahua</div><div class="member-id">581452849947475968</div></div></div>
+        <div class="member"><div class="member-avatar">P</div><div><div>panicthelamma</div><div class="member-id">779741822477926400</div></div></div>
+        <div class="member"><div class="member-avatar">S</div><div><div>shami47</div><div class="member-id">942917135225733221</div></div></div>
+        <div class="member"><div class="member-avatar">L</div><div><div>Lyth</div><div class="member-id">1091011714201440267</div></div></div>
+      </div>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section id="troubleshooting">
+      <h2>Troubleshooting</h2>
+
+      <h3>Bot not responding to messages</h3>
+      <div class="callout callout-info">
+        <div class="callout-icon">ℹ️</div>
+        <div>Outside the home channel, the bot requires an @mention. Check <code>~/.hermes/config.yaml</code> — only channel <code>1494641107844468886</code> should be in <code>free_response_channels</code>.</div>
+      </div>
+      <pre><code>hermes gateway status
+tail -20 bot.log</code></pre>
+
+      <h3>Skills not appearing in /skill autocomplete</h3>
+      <p>Skills must be registered in <code>~/.hermes/config.yaml</code> under <code>skills.external_dirs</code>. After adding a new skill:</p>
+      <pre><code>hermes skills list          <span class="comment"># verify skill appears</span>
+hermes gateway restart      <span class="comment"># re-sync slash commands</span></code></pre>
+
+      <h3>Price showing N/A</h3>
+      <p>The scripts load API keys from <code>.env</code> via <code>skills/_load_env.py</code>. Verify keys are set:</p>
+      <pre><code>grep "GG_DEALS_API_KEY\|ITAD_API_KEY" .env</code></pre>
+
+      <h3>game-suggest returns no results</h3>
+      <p>SteamSpy may be temporarily slow (can take up to 20s) or rate-limited. Try again after a minute. If prices are unavailable, verify <code>GG_DEALS_API_KEY</code> and <code>ITAD_API_KEY</code> are set in <code>.env</code>.</p>
+
+      <h3>Steam library not fetching</h3>
+      <ul style="padding-left:20px;line-height:2.2;color:var(--text)">
+        <li>Go to Steam → Profile → Edit Profile → Privacy Settings → set <strong>Game Details</strong> to Public</li>
+        <li>Verify <code>STEAM_API_KEY</code> is set in <code>.env</code></li>
+        <li>If using a vanity URL and it fails, try the numeric SteamID64 instead</li>
+      </ul>
+
+      <h3>Gateway keeps crashing (exit code 75)</h3>
+      <p>Exit code <code>75/TEMPFAIL</code> is <strong>normal</strong> — it's how Hermes tells systemd to restart it after a clean shutdown. If it's crash-looping:</p>
+      <pre><code>journalctl --user -u hermes-gateway.service -n 100 --no-pager
+cat ~/.hermes/logs/errors.log</code></pre>
+
+      <h3>Hermes responds but doesn't run the script</h3>
+      <p>The LLM may be using an older cached version of the SKILL.md. Restart the gateway to reload skill instructions:</p>
+      <pre><code>hermes gateway restart</code></pre>
+    </section>
+
+    <hr>
+    <p style="color:var(--muted);font-size:13px;text-align:center;padding-bottom:40px">
+      Hermes Bot · gaming_Tavern · Built with <a href="https://hermes-agent.nousresearch.com">Hermes Agent Framework</a>
+    </p>
+
+  </main>
+</div>
+</body>
+</html>

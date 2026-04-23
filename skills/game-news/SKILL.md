@@ -11,13 +11,20 @@ author: your-username
 Run the terminal command immediately. Do not make up patch notes. Do not print or echo the terminal command in your response.
 
 ## Command
+
+**When a user manually asks for game news** — use `--recent` so browsing doesn't consume the cron feed:
 ```
-python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py
+python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py --recent
 ```
 
-For a specific game, provide its Steam app ID:
+For a specific game (manual, by Steam app ID):
 ```
-python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py <app_id>
+python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py --recent <app_id>
+```
+
+**When invoked by cron** — omit `--recent` so items are marked seen and won't re-post:
+```
+python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py
 ```
 
 ## Output Interpretation
@@ -26,4 +33,20 @@ python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py <app_id>
 - Each item: `GAME`, `TITLE`, `URL`, `DATE`, `SUMMARY`
 
 ## Response Style
-Rewrite each item in Hermes character. Include URL as a link. Major update = proclamation. Hotfix = "the developers have corrected their mortal error". New content = excited herald.
+
+Use this exact format for each item, with a blank line between items:
+
+```
+**{GAME}** — {TITLE}
+{1–2 sentences in Hermes character summarising what changed}
+{DATE} · <{URL}>
+```
+
+Tone by update type:
+- Patch / hotfix → dry, matter-of-fact with one cutting remark ("The gods corrected their error. It took them three weeks.")
+- Major update / new content → excited herald energy, one punchy line of hype
+- Event / season → treat as political intrigue from Olympus
+
+If there are multiple items for the same game, group them together under one game header rather than repeating the name.
+
+Never paste bare URLs — always wrap in angle brackets: `<https://example.com>`.
