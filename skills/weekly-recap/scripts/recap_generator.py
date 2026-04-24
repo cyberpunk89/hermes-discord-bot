@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
 import _load_env  # noqa: F401
 os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
 from database import get_playtime_since_last_snapshot, save_playtime_snapshot, get_linked_users
+from discord_utils import ensure_display_name
 
 
 def main():
@@ -37,7 +38,8 @@ def main():
     player_game_time = defaultdict(lambda: defaultdict(int))
 
     for row in deltas:
-        name = row["discord_name"]
+        user_dict = {"discord_id": row["discord_id"], "discord_name": row["discord_name"]}
+        name = ensure_display_name(user_dict)
         game = row["game_name"]
         mins = row["delta_minutes"]
         player_totals[name] += mins
@@ -56,8 +58,10 @@ def main():
     game_totals = defaultdict(int)
     game_players = defaultdict(set)
     for row in deltas:
+        user_dict = {"discord_id": row["discord_id"], "discord_name": row["discord_name"]}
+        name = ensure_display_name(user_dict)
         game_totals[row["game_name"]] += row["delta_minutes"]
-        game_players[row["game_name"]].add(row["discord_name"])
+        game_players[row["game_name"]].add(name)
 
     if game_totals:
         top_game = max(game_totals, key=game_totals.get)
@@ -71,8 +75,10 @@ def main():
     print("TOP_SESSIONS:")
     top_rows = sorted(deltas, key=lambda r: r["delta_minutes"], reverse=True)[:10]
     for row in top_rows:
+        user_dict = {"discord_id": row["discord_id"], "discord_name": row["discord_name"]}
+        name = ensure_display_name(user_dict)
         hours = row["delta_minutes"] / 60
-        print(f"{row['discord_name']}: {row['game_name']} — {hours:.1f}h")
+        print(f"{name}: {row['game_name']} — {hours:.1f}h")
 
     save_playtime_snapshot()
 

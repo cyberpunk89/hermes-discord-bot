@@ -1,46 +1,27 @@
 #!/usr/bin/env python3
 import sys
 import os
-import requests
-import time
 
+# Import centralized utilities
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _PROJECT_DIR)
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills"))
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
-sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills", "game-price", "scripts"))
-sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills", "common-games", "scripts"))
+
+import _importer  # noqa: F401
 import _load_env  # noqa: F401
-os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
-
+from _steam_utils import search_steam, fetch_steam_details
+from _price_utils import fetch_price_fallback
+from _rate_limiter import GG_DEALS_LIMITER, ITAD_LIMITER
 from database import get_linked_users, get_user_games
-from price_lookup import search_steam, get_gg_price, get_itad_price
 from common_games import fetch_coop_status
-
-STEAM_DETAIL_URL = "https://store.steampowered.com/api/appdetails"
-GG_KEY = os.environ.get("GG_DEALS_API_KEY", "")
-ITAD_KEY = os.environ.get("ITAD_API_KEY", "")
-
-
-def fetch_steam_details(appid):
-    try:
-        r = requests.get(STEAM_DETAIL_URL, params={"appids": appid, "cc": "eu", "l": "en"}, timeout=8)
-        data = r.json().get(str(appid), {})
-        if not data.get("success"):
-            return None
-        d = data["data"]
-        return {
-            "name": d.get("name", "Unknown"),
-            "header_image": d.get("header_image", ""),
-        }
-    except Exception:
-        return None
+from discord_utils import get_display_name, ensure_display_name
 
 
 def fetch_price(appid):
-    prices = get_gg_price(appid)
-    if not prices and ITAD_KEY:
-        prices = get_itad_price(appid)
-    return prices
+    """Fetch price with rate limiting and GG.deals primary + ITAD fallback."""
+    GG_DEALS_LIMITER.wait()
+    return fetch_price_fallback(appid, gg_region="eu", itad_country="DE")
 
 
 def resolve_members(requested_names, all_users):
@@ -67,6 +48,9 @@ def main():
         print("ERROR: usage: should_buy.py <game name> [member1] [member2] ...")
         return
 
+    # DEBUG: marker to prove script executed
+    print(f"[DEBUG] should_buy.py executed for: {sys.argv[1]}")
+
     # First arg is game name (quoted), rest are optional member names
     game_query = sys.argv[1]
     requested_members = sys.argv[2:]
@@ -76,6 +60,9 @@ def main():
         print("NOT_FOUND")
         return
 
+    # Rate limit before Steam API call
+    ITAD_LIMITER.wait()
+    
     details = fetch_steam_details(appid)
     game_name = details["name"] if details else game_query
 
@@ -131,10 +118,11 @@ def main():
     buyers = []
 
     for u in members:
+        name = ensure_display_name(u)
         if user_owns_game(u["discord_id"], appid):
-            owners.append(u["discord_name"])
+            owners.append(name)
         else:
-            buyers.append(u["discord_name"])
+            buyers.append(name)
 
     for name in owners:
         print(f"OWNS: {name}")

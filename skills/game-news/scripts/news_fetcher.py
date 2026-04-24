@@ -5,16 +5,23 @@ import re
 import requests
 from datetime import datetime
 
+# Import centralized utilities
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _PROJECT_DIR)
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills"))
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
-import _load_env  # noqa: F401
-os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
-from database import get_common_games, is_news_seen, add_seen_news
 
-STEAM_KEY = os.environ.get("STEAM_API_KEY", "")
+import _importer  # noqa: F401
+import _load_env  # noqa: F401
+from _rate_limiter import STEAM_LIMITER
+from database import get_common_games, is_news_seen, add_seen_news
+from cache import get_cache, set_cache
+
 STEAM_NEWS_URL = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/"
 UPDATE_KEYWORDS = {"update", "patch", "hotfix", "new content", "season", "event", "dlc", "release"}
+
+# News cache TTL: 4 hours
+NEWS_CACHE_TTL = 4 * 3600
 
 _HTML_TAG = re.compile(r"<[^>]+>")
 _BBCODE_TAG = re.compile(r"\[/?[a-z*]+(?:=[^\]]+)?\]", re.IGNORECASE)
@@ -41,6 +48,9 @@ def is_relevant(title, contents):
 
 def fetch_news(app_id, game_name, recent_mode=False):
     try:
+        # Rate limit before API call
+        STEAM_LIMITER.wait()
+        
         r = requests.get(
             STEAM_NEWS_URL,
             params={"appid": app_id, "count": 10, "maxlength": 500, "format": "json"},

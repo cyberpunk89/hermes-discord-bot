@@ -7,17 +7,28 @@ author: your-username
 
 # Weekly Recap & Power Rankings
 
+## MANDATORY — DO NOT SKIP
+
+**YOU MUST RUN THE SCRIPTS FIRST. This is not optional.**
+
+1. Run BOTH commands in order BEFORE responding
+2. The script output MUST appear in your response
+3. DO NOT make up playtime data — use ONLY script output
+4. If a script fails, state the error clearly
+
+**Failure to run the scripts will result in incorrect responses.**
+
 ## IMPORTANT
 Run BOTH commands in order. Do not skip either. Do not make up playtime data. Do not print or echo the terminal commands in your response.
 
 ## Step 1 — Refresh playtime from Steam
 ```
-python3 <INSTALL_DIR>/skills/weekly-recap/scripts/refresh_playtime.py
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/weekly-recap/scripts/refresh_playtime.py
 ```
 
 ## Step 2 — Generate the recap
 ```
-python3 <INSTALL_DIR>/skills/weekly-recap/scripts/recap_generator.py
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/weekly-recap/scripts/recap_generator.py
 ```
 
 ## Output Interpretation

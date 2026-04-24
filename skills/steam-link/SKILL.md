@@ -7,6 +7,18 @@ author: your-username
 
 # Steam Account Linking
 
+## MANDATORY — DO NOT SKIP
+
+**YOU MUST RUN THE SCRIPT FIRST. This is not optional.**
+
+1. Run the terminal command BEFORE responding
+2. The script output MUST appear in your response
+3. DO NOT make up data — use ONLY script output
+4. If the script fails, state the error clearly
+5. If the script output is empty or unexpected, re-run it — don't guess
+
+**Failure to run the script will result in incorrect responses.**
+
 ## IMPORTANT
 Run the terminal command immediately. Do not simulate the result. Do not print or echo the terminal command in your response. Never search for discord_id. Never ask the user for their discord_id.
 
@@ -18,19 +30,19 @@ The `<steam_id_or_vanity>` MUST be taken verbatim from the user's message — th
 
 **Link a Steam account** (steam_id can be a 64-bit ID or vanity URL slug):
 ```
-python3 <INSTALL_DIR>/skills/steam-link/scripts/steam_linker.py link "<display_name>" "<steam_id_or_vanity>"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/steam-link/scripts/steam_linker.py link "<display_name>" "<steam_id_or_vanity>"
 ```
 
 Pass exactly 2 arguments after `link`: the display name, then the Steam ID/vanity. Do NOT pass a discord_id as a third or first argument.
 
 **Unlink:**
 ```
-python3 <INSTALL_DIR>/skills/steam-link/scripts/steam_linker.py unlink "<display_name>"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/steam-link/scripts/steam_linker.py unlink "<display_name>"
 ```
 
 **List linked users:**
 ```
-python3 <INSTALL_DIR>/skills/steam-link/scripts/steam_linker.py list-users
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/steam-link/scripts/steam_linker.py list-users
 ```
 
 ## Output Interpretation

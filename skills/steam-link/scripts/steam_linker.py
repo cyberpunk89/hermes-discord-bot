@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 import sys
 import os
+import json
 import sqlite3
-import requests
 
+# Import centralized utilities
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _PROJECT_DIR)
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills"))
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
-import _load_env  # noqa: F401
-os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
-from database import link_steam_user, unlink_steam_user, get_linked_users, upsert_user_games
 
-STEAM_KEY = os.environ.get("STEAM_API_KEY", "")
-STEAM_BASE = "https://api.steampowered.com"
+import _importer  # noqa: F401
+import _load_env  # noqa: F401
+from _steam_utils import resolve_vanity, fetch_library
+from _rate_limiter import STEAM_LIMITER
+from database import link_steam_user, unlink_steam_user, get_linked_users, upsert_user_games
+from discord_utils import get_display_name, ensure_display_name
+
 DB_PATH = os.environ.get("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
 
 
@@ -35,42 +39,14 @@ def resolve_user(discord_name: str) -> tuple[str | None, str]:
     return None, discord_name
 
 
-def resolve_vanity(vanity):
-    try:
-        r = requests.get(
-            f"{STEAM_BASE}/ISteamUser/ResolveVanityURL/v1/",
-            params={"key": STEAM_KEY, "vanityurl": vanity},
-            timeout=8,
-        )
-        data = r.json().get("response", {})
-        if data.get("success") == 1:
-            return data["steamid"]
-    except Exception:
-        pass
-    return None
-
-
-def fetch_library(steam_id):
-    try:
-        r = requests.get(
-            f"{STEAM_BASE}/IPlayerService/GetOwnedGames/v1/",
-            params={"key": STEAM_KEY, "steamid": steam_id, "include_appinfo": 1, "include_played_free_games": 1},
-            timeout=15,
-        )
-        response = r.json().get("response", {})
-        # Steam omits 'game_count' entirely when the library is private
-        if "game_count" not in response and not response.get("games"):
-            return None
-        games = response.get("games", [])
-        return [{"appid": g["appid"], "name": g.get("name", "Unknown"), "playtime_forever": g.get("playtime_forever", 0)} for g in games]
-    except Exception:
-        return None
-
-
 def cmd_link(args):
     if len(args) < 2:
         print("ERROR: link requires discord_name, steam_id_or_vanity")
         return
+
+    # DEBUG: marker to prove script executed
+    print(f"[DEBUG] steam_linker.py link executed")
+
     # Accept either 2 args (display_name, steam_id) or 3 args (discord_id, display_name, steam_id)
     if len(args) >= 3:
         discord_name, steam_input = args[1].strip(), args[2]
@@ -85,6 +61,11 @@ def cmd_link(args):
     if not discord_id:
         discord_id, resolved_name = discord_name, discord_name
 
+    # Fetch fresh name from Discord API for accuracy
+    resolved_name = get_display_name(discord_id)
+
+    # Rate limit before Steam API call
+    STEAM_LIMITER.wait()
     steam_id = steam_input if steam_input.isdigit() and len(steam_input) >= 15 else resolve_vanity(steam_input)
     if not steam_id:
         print("VANITY_NOT_FOUND")
@@ -126,7 +107,8 @@ def cmd_list_users(args):
         return
     print(f"COUNT: {len(users)}")
     for u in users:
-        print(f"USER: {u['discord_name']} | STEAM: {u['steam_id']} | LINKED: {u['linked_at']}")
+        name = ensure_display_name(u)
+        print(f"USER: {name} | STEAM: {u['steam_id']} | LINKED: {u['linked_at']}")
 
 
 def main():

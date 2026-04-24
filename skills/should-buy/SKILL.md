@@ -7,6 +7,18 @@ author: your-username
 
 # Should We Buy This?
 
+## MANDATORY — DO NOT SKIP
+
+**YOU MUST RUN THE SCRIPT FIRST. This is not optional.**
+
+1. Run the terminal command BEFORE responding
+2. The script output MUST appear in your response
+3. DO NOT make up prices, ownership, or any data — use ONLY script output
+4. If the script fails or returns NOT_FOUND, state that clearly
+5. If the script output is empty or missing expected data, re-run it — don't guess
+
+**Failure to run the script will result in incorrect responses.**
+
 ## IMPORTANT
 Run the terminal command immediately. Do not guess prices or ownership. Do not print or echo the terminal command in your response.
 
@@ -15,13 +27,13 @@ Extract member names from the user's message. If they mention specific people ("
 ## Command
 
 ```
-python3 <INSTALL_DIR>/skills/should-buy/scripts/should_buy.py "<game name>" [member1] [member2] ...
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/should-buy/scripts/should_buy.py "<game name>" [member1] [member2] ...
 ```
 
 Examples:
 ```
-python3 <INSTALL_DIR>/skills/should-buy/scripts/should_buy.py "Elden Ring"
-python3 <INSTALL_DIR>/skills/should-buy/scripts/should_buy.py "Deep Rock Galactic" "Nikel" "furaiboi"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/should-buy/scripts/should_buy.py "Elden Ring"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/should-buy/scripts/should_buy.py "Deep Rock Galactic" "Nikel" "furaiboi"
 ```
 
 ## Output Interpretation

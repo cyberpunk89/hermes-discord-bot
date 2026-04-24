@@ -7,12 +7,41 @@ This document maps critical files and their dependencies to prevent accidental d
 ### Database
 - **`db/database.py`** — Central SQLite schema and all DB operations
   - Used by: ALL skills (game-watchlist, steam-link, common-games, game-news, weekly-recap, should-buy, game-suggest)
-  - Tables: watchlist, price_history, users, user_games, seen_news, playtime_snapshots, game_coop_cache
+  - Tables: watchlist, price_history, users, user_games, seen_news, playtime_snapshots, game_coop_cache, api_cache
 
 ### Shared Utilities
 - **`skills/_load_env.py`** — Loads .env into os.environ for all skill scripts
   - Used by: Every skill script (via sys.path)
   - Critical for: API keys (DISCORD_BOT_TOKEN, STEAM_API_KEY, GG_DEALS_API_KEY, ITAD_API_KEY)
+
+- **`skills/_importer.py`** — Centralized path configuration
+  - Auto-configures sys.path for all skills
+  - Eliminates repeated boilerplate in scripts
+
+- **`skills/_steam_utils.py`** — Shared Steam API functions
+  - Exports: `resolve_vanity()`, `fetch_library()`, `fetch_steam_details()`, `search_steam()`
+  - Used by: steam_linker, refresh_playtime, should_buy
+
+- **`skills/_price_utils.py`** — Shared price lookup utilities
+  - Exports: `get_gg_price()`, `get_itad_price()`, `fetch_price_fallback()`
+  - Used by: should_buy, watchlist_manager, game_suggester
+
+- **`skills/_rate_limiter.py`** — Thread-safe API rate limiting
+  - Exports: `STEAM_LIMITER`, `GG_DEALS_LIMITER`, `ITAD_LIMITER`, `DISCORD_LIMITER`
+  - Prevents API rate limit violations
+
+### Discord User Utilities
+- **`db/discord_utils.py`** — Discord user name resolution (cache + API)
+  - Exports: `get_display_name()`, `ensure_display_name()`
+  - Uses: `db/cache.py` for 24-hour cache
+  - Used by: All skills that display user names (steam-link, should-buy, weekly-recap, etc.)
+- **`db/discord_users.json`** — Static Discord user data (fallback)
+
+### Cache Layer
+- **`db/cache.py`** — Unified SQLite cache with TTL expiration
+  - Exports: `get_cache()`, `set_cache()`, `delete_cache()`, `clear_expired_cache()`, `init_cache_table()`
+  - Used by: price_lookup, common_games, discord_utils, game-news
+  - Cache TTLs: prices 1h, Steam 24h, co-op 14 days, Discord 24h, news 4h
 
 ### Price Lookups
 - **`skills/game-price/scripts/price_lookup.py`** — Steam/GG.deals/ITAD API functions

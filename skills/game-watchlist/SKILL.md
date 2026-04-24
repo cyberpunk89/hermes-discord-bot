@@ -7,6 +7,17 @@ author: your-username
 
 # Game Watchlist
 
+## MANDATORY — DO NOT SKIP
+
+**YOU MUST RUN THE SCRIPT FIRST. This is not optional.**
+
+1. Run the terminal command BEFORE responding
+2. The script output MUST appear in your response
+3. DO NOT make up data — use ONLY script output
+4. If the script fails, state the error clearly
+
+**Failure to run the script will result in incorrect responses.**
+
 ## IMPORTANT
 Always run the terminal command to perform the action. Never simulate results. Do not print or echo the terminal command in your response.
 
@@ -30,32 +41,32 @@ Stay in Hermes character when presenting this.
 
 **Add a game:**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py add "<display_name>" "<game name>" [target_price]
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py add "<display_name>" "<game name>" [target_price]
 ```
 
 **Remove a game:**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py remove "<display_name>" "<game name>"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py remove "<display_name>" "<game name>"
 ```
 
 **List watchlist:**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py list "<display_name>"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py list "<display_name>"
 ```
 
 **Set target price:**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py set-target "<display_name>" "<game name>" <price>
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py set-target "<display_name>" "<game name>" <price>
 ```
 
 **Clear watchlist:**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py clear "<display_name>"
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py clear "<display_name>"
 ```
 
 **Check all watchlist prices and fire alerts (used by cron):**
 ```
-python3 <INSTALL_DIR>/skills/game-watchlist/scripts/watchlist_manager.py check-prices
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-watchlist/scripts/watchlist_manager.py check-prices
 ```
 
 ## Output Interpretation

@@ -7,6 +7,17 @@ author: your-username
 
 # Game News Fetcher
 
+## MANDATORY — DO NOT SKIP
+
+**YOU MUST RUN THE SCRIPT FIRST. This is not optional.**
+
+1. Run the terminal command BEFORE responding
+2. The script output MUST appear in your response
+3. DO NOT make up patch notes — use ONLY script output
+4. If the script fails, state the error clearly
+
+**Failure to run the script will result in incorrect responses.**
+
 ## IMPORTANT
 Run the terminal command immediately. Do not make up patch notes. Do not print or echo the terminal command in your response.
 
@@ -14,17 +25,17 @@ Run the terminal command immediately. Do not make up patch notes. Do not print o
 
 **When a user manually asks for game news** — use `--recent` so browsing doesn't consume the cron feed:
 ```
-python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py --recent
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-news/scripts/news_fetcher.py --recent
 ```
 
 For a specific game (manual, by Steam app ID):
 ```
-python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py --recent <app_id>
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-news/scripts/news_fetcher.py --recent <app_id>
 ```
 
 **When invoked by cron** — omit `--recent` so items are marked seen and won't re-post:
 ```
-python3 <INSTALL_DIR>/skills/game-news/scripts/news_fetcher.py
+python3 /home/nikel/Documents/projects/discord/game-price-bot/skills/game-news/scripts/news_fetcher.py
 ```
 
 ## Output Interpretation

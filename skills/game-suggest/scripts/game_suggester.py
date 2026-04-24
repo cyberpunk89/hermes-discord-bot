@@ -4,19 +4,20 @@ import os
 import requests
 import time
 
+# Import centralized utilities
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _PROJECT_DIR)
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills"))
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
-sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills", "game-price", "scripts"))
-import _load_env  # noqa: F401
-os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
 
+import _importer  # noqa: F401
+import _load_env  # noqa: F401
+from _price_utils import fetch_price_fallback
+from _rate_limiter import GG_DEALS_LIMITER, ITAD_LIMITER
 from database import get_linked_users, get_user_games
-from price_lookup import get_gg_price, get_itad_price
+from discord_utils import ensure_display_name
 
 STEAMSPY_URL = "https://steamspy.com/api.php"
-GG_KEY = os.environ.get("GG_DEALS_API_KEY", "")
-ITAD_KEY = os.environ.get("ITAD_API_KEY", "")
 
 MAX_PRICE_EUR = 60.0
 CANDIDATES_TO_CHECK = 30
@@ -63,10 +64,9 @@ def fetch_coop_candidates():
 
 
 def fetch_price(appid):
-    prices = get_gg_price(appid) if GG_KEY else None
-    if not prices and ITAD_KEY:
-        prices = get_itad_price(appid)
-    return prices
+    """Fetch price with rate limiting and GG.deals primary + ITAD fallback."""
+    GG_DEALS_LIMITER.wait()
+    return fetch_price_fallback(appid, gg_region="eu", itad_country="DE")
 
 
 def main():
@@ -116,7 +116,6 @@ def main():
             f"SUGGESTION: {c['name']} | APPID: {c['appid']} | PRICE: €{retail:.2f}"
             f" | HIST_LOW: {hist_str} | DISCOUNT: {disc_str} | URL: {store_url}"
         )
-        time.sleep(0.15)
 
     if not suggestions:
         print("NO_SUGGESTIONS: No priced co-op games found outside the group's library. Try again later.")

@@ -2,24 +2,26 @@
 import sys
 import os
 import sqlite3
-import requests
 
+# Import centralized utilities
 _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _PROJECT_DIR)
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills"))
 sys.path.insert(0, os.path.join(_PROJECT_DIR, "db"))
-sys.path.insert(0, os.path.join(_PROJECT_DIR, "skills", "game-price", "scripts"))
-import _load_env  # noqa: F401
-os.environ.setdefault("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
 
+import _importer  # noqa: F401
+import _load_env  # noqa: F401
+from _steam_utils import search_steam
+from _price_utils import fetch_price_fallback
+from _rate_limiter import GG_DEALS_LIMITER, ITAD_LIMITER
 from database import (
     add_to_watchlist, remove_from_watchlist, get_user_watchlist,
     set_target_price, count_user_watchlist, clear_user_watchlist,
     find_by_game_title, update_last_prices, get_all_watchlist,
 )
-from price_lookup import search_steam, get_gg_price, get_itad_price
+from discord_utils import get_display_name
 
 MAX_WATCHLIST = 20
-ITAD_KEY = os.environ.get("ITAD_API_KEY", "")
 DB_PATH = os.environ.get("DB_PATH", os.path.join(_PROJECT_DIR, "watchlist.db"))
 
 
@@ -53,10 +55,9 @@ def _require_user(discord_name: str) -> tuple[str, str] | None:
 
 
 def _fetch_prices(appid):
-    prices = get_gg_price(appid)
-    if not prices and ITAD_KEY:
-        prices = get_itad_price(appid)
-    return prices
+    """Fetch prices with rate limiting and GG.deals primary + ITAD fallback."""
+    GG_DEALS_LIMITER.wait()
+    return fetch_price_fallback(appid, gg_region="eu", itad_country="DE")
 
 
 def cmd_add(args):
@@ -85,9 +86,14 @@ def cmd_add(args):
         print("NOT_FOUND")
         return
 
+    # Rate limit before Steam API call
+    STEAM_LIMITER = ITAD_LIMITER  # Reuse ITAD limiter for Steam calls
+    STEAM_LIMITER.wait()
+    
     try:
-        r = requests.get("https://store.steampowered.com/api/appdetails", params={"appids": appid, "cc": "eu", "l": "en"}, timeout=8)
-        title = r.json().get(str(appid), {}).get("data", {}).get("name", game_name)
+        from _steam_utils import fetch_steam_details
+        details = fetch_steam_details(appid)
+        title = details["name"] if details else game_name
     except Exception:
         title = game_name
 
@@ -203,6 +209,20 @@ def cmd_check_prices(args):
         if appid in processed:
             continue
         processed.add(appid)
+        # Rate limit before fetching prices
+        GG_DEALS_LIMITER.wait()
+        prices = _fetch_prices(appid)
+        if not prices:
+            continue
+        processed.add(appid)
+        # Rate limit before fetching prices
+        GG_DEALS_LIMITER.wait()
+        prices = _fetch_prices(appid)
+        if not prices:
+            continue
+        processed.add(appid)
+        # Rate limit before fetching prices
+        GG_DEALS_LIMITER.wait()
         prices = _fetch_prices(appid)
         if not prices:
             continue
